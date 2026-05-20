@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>World Cupify</title>
+  </head>
+  <body>
+    <button>Click aquí</button>
+    <h1>Round {{round}}, battle {{battle}}/{{round_matches}}</h1>
+    <form method="post" action="/battle">
+        <div style="display: flex;">
+            <button name="winner" style="width: 50%;" value="{{contender_1}}" >{{contender_1}}</button>
+            <button name="winner" style="width: 50%;" value="{{contender_2}}" >{{contender_2}}</button>
+        </div>
+    </form>
+    <h2>{{round_winners}}</h2>
+  </body>
+</html>

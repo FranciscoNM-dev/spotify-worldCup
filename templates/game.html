@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>World Cupify</title>
+  </head>
+  <body>
+    <button>Click aquí</button>
+    <h1>Spotify World Cup</h1>
+    <h1>Hola, {{username}}</h1>
+    <h3>Mode:</h3>
+    <form action="/game_start" method="post">
+        <input type="radio" name="game_mode" value="artists" checked> Artists
+        <input type="radio" name="game_mode" value="tracks"> Tracks
+    <h3>Time range:</h3>
+        <input type="radio" name="time_range" value="short_term" checked> Last Month
+        <input type="radio" name="time_range" value="medium_term"> Last 6 Months
+        <input type="radio" name="time_range" value="long_term"> Last Year
+    <h3>Number of participants:</h3>
+        <select name="participants">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+        </select>
+    <button type="submit">START</button>
+    </form>
+
+  </body>
+</html>
