@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+body { /* Estos estilos serán para TODOS LOS BODY. Algunos se heredarán a sus elementos hijos también*/
+        min-height: 100vh; /* el body ocupa al menos (min) el 100% de la ventana (vh viewport height) */
+        /* Eso nos ayudará a que al centrar verticalmente, se vaya al centro centro de la pantalla */
+        margin: 0; /* eliminamos el margen por defecto que pondría el navegador al body */
+        font-family: 'Montserrat', sans-serif; /* añadimos la fuente "descargada" arriba */
+        /* sans-serif es el plan B. En plan, imagina que borran Montserrat */
+        background-color: #121212;
+        color: white;
+    }

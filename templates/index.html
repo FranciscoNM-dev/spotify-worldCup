@@ -2,9 +2,35 @@
 <html>
   <head>
     <title>World Cupify</title>
+    <link href="/static/styles.css" rel="stylesheet"> 
+    <!-- Importamos el css styles, que está en static --> 
+    <style>
+    body { /* Estos estilos serán para el body. Algunos se heredarán a sus elementos hijos también*/
+        display: flex; /* activa flexbox. Es un sistema para organizar elementos fácilmente */
+        flex-direction: column; /* apila vertical en vez de horizontal */
+        align-items: center; /* centra los elementos horizontalmente */
+        justify-content: center; /* centra los elementos verticalmente */
+    }
+    .login-btn { /* Estos estilos serán para la CLASE login-btn. Si pongo class=login-btn se aplicarán */
+        background-color: #1DB954; /* color de fondo */
+        color: white; /* color del texto */
+        padding: 12px 32px; /* tamaño entre el texto y el que será el borde del botón */
+        border-radius: 24px; /* redondea las esquinas. Cuanto más alto, más redondeado */
+        text-decoration: none; /* para borrar el subrayado que hacen los navegadores por defecto */
+    }
+    h1 {
+        margin-bottom: 8px; /*Reduzco el margen inferior */
+    }
+
+    h3 {
+        margin-top: 0; margin-bottom: 8px; /*Reduzco el margen superior */
+        margin-bottom: 24px; /*Reduzco el margen inferior */
+    }
+</style>
   </head>
   <body>
-    <button>Click aquí</button>
     <h1>Spotify World Cup</h1>
+    <h3>Which are your Spotify favourites now?</h3>
+    <a href="/login" class="login-btn">Log in with Spotify</a> <!-- le aplicamos la clase login-btn al botón, está definida en style, en head -->
   </body>
 </html>

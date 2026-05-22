@@ -2,9 +2,13 @@
 <html>
   <head>
     <title>World Cupify</title>
+    <link href="/static/styles.css" rel="stylesheet"> 
+    <!-- Importamos el css styles, que está en static --> 
   </head>
   <body>
-    <button>Click aquí</button>
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
     <h1>Spotify World Cup</h1>
     <h1>Hola, {{username}}</h1>
     <h3>Mode:</h3>
@@ -25,6 +29,6 @@
         </select>
     <button type="submit">START</button>
     </form>
-
+    <a href="/logout" onclick="var w = window.open('https://accounts.spotify.com/logout', '_blank', 'width=500,height=500'); setTimeout(function(){ w.close(); }, 2000);">Logout</a>
   </body>
 </html>

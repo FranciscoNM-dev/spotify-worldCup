@@ -9,6 +9,8 @@ def generate_data_web(access_token, game_mode, time_range, participants):
     elif game_mode == 'tracks':
         data = sp.current_user_top_tracks(limit = 50, time_range = time_range)
     items=data['items']
+    if len(items) < participants:
+        raise ValueError(f'Not enough elements. You listened to just {len(items)} {game_mode} in that time period.')
     random.shuffle(items)
     items = items[0:participants]
     elements_list = []

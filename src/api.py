@@ -4,10 +4,13 @@ from fastapi.templating import Jinja2Templates
 from src.auth import get_token_code, get_auth_url, get_spotify_client_web
 from src.spotifydata import generate_data_web
 import json
+from fastapi.staticfiles import StaticFiles
+
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
@@ -28,19 +31,30 @@ async def callback(code: str):
 
 @app.get("/game", response_class=HTMLResponse)
 async def game_page(request: Request):
+
     access_token = request.cookies['access_token']
     spClient = get_spotify_client_web(access_token)
     username = spClient.current_user()['display_name']
-    return templates.TemplateResponse(
-        request=request, name="game.html", context={"username": username}
+    error = request.cookies.get('error', None)
+    response = templates.TemplateResponse(
+        request=request, name="game.html", context={"username": username, "error": error}
     )
+    if error:
+        response.delete_cookie("error")
 
-@app.post("/game_start", response_class=RedirectResponse ) #ESTE ES .post, NO .get
+    return response
+
+@app.post("/game_start", response_class=RedirectResponse) #ESTE ES .post, NO .get
 #Es post porque recoge lo del formulario que le enviamos desde /game a partir de game.html
 async def game_start(request: Request, game_mode: str = Form(...), time_range: str = Form(...), participants: int = Form(...)): 
     #Lo que importa es el nombre del param. Va a Form a buscar ese nombre en particular
     access_token = request.cookies['access_token']
-    lista = generate_data_web(access_token, game_mode, time_range, participants)
+    try:
+        lista = generate_data_web(access_token, game_mode, time_range, participants)
+    except ValueError as e:
+        response = RedirectResponse("/game", status_code=303)
+        response.set_cookie(key='error', value = str(e))
+        return response
     bracket = [[lista[x], lista[x+1]] for x in range(0,len(lista),2)]
     response = RedirectResponse("/battle", status_code=303)
     response.set_cookie(key="bracket", value=json.dumps(bracket))
@@ -89,4 +103,12 @@ async def proccess_choice(request: Request, winner = Form(...)):
 async def winner(request: Request):
     winner = request.cookies['winner']
     return f'{winner} wins!!'
+
+@app.get("/logout", response_class=RedirectResponse)
+async def logout(request: Request):
+    response = RedirectResponse("/")
+    for cookie in request.cookies.keys():
+        response.delete_cookie(cookie)
+    return response
+    
 
