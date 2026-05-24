@@ -49,13 +49,14 @@ async def game_page(request: Request):
 async def game_start(request: Request, game_mode: str = Form(...), time_range: str = Form(...), participants: int = Form(...)): 
     #Lo que importa es el nombre del param. Va a Form a buscar ese nombre en particular
     access_token = request.cookies['access_token']
+    sp = get_spotify_client_web(access_token)
     try:
-        lista = generate_data_web(access_token, game_mode, time_range, participants)
+        participant_dictionaries = generate_data_web(sp, game_mode, time_range, participants)
     except ValueError as e:
         response = RedirectResponse("/game", status_code=303)
         response.set_cookie(key='error', value = str(e))
         return response
-    bracket = [[lista[x], lista[x+1]] for x in range(0,len(lista),2)]
+    bracket = [[participant_dictionaries[x], participant_dictionaries[x+1]] for x in range(0,len(participant_dictionaries),2)]
     response = RedirectResponse("/battle", status_code=303)
     response.set_cookie(key="bracket", value=json.dumps(bracket))
     response.set_cookie(key='index', value=0)
@@ -73,8 +74,7 @@ async def game_round(request: Request):
     contender_2=bracket[index][1]
     return templates.TemplateResponse(request = request, name = 'battle.html',
                                       context={'battle': index+1, 'round_matches': round_matches,'round': round,
-                                      'contender_1': contender_1, 'contender_2': contender_2,
-                                      'round_winners': json.dumps(request.cookies['round_winners'])})
+                                      'contender_1': contender_1, 'contender_2': contender_2})
         
 
 @app.post("/battle", response_class=RedirectResponse)
@@ -86,9 +86,10 @@ async def proccess_choice(request: Request, winner = Form(...)):
     round = int(request.cookies['round'])
     round_winners.append(winner)
     if len(round_winners)==len(bracket):
+        round_winners = [json.loads(round_winner) for round_winner in round_winners]
         if len(round_winners) == 1: #Hay ganador
             response = RedirectResponse("/winner", status_code = 303)
-            response.set_cookie(key = 'winner', value = round_winners[0])
+            response.set_cookie(key = 'winner', value = json.dumps(round_winners[0]))
             return response
         bracket = [[round_winners[x], round_winners[x+1]] for x in range(0,len(round_winners),2)]
         round_winners = []
@@ -101,8 +102,8 @@ async def proccess_choice(request: Request, winner = Form(...)):
 
 @app.get("/winner")
 async def winner(request: Request):
-    winner = request.cookies['winner']
-    return f'{winner} wins!!'
+    winner = json.loads(request.cookies['winner'])
+    return f'{winner['name']} wins!!'
 
 @app.get("/logout", response_class=RedirectResponse)
 async def logout(request: Request):
@@ -114,6 +115,7 @@ async def logout(request: Request):
 @app.get("/images")
 async def get_images(request: Request):
     access_token = request.cookies['access_token']
-    return generate_pictures(access_token)
+    sp = get_spotify_client_web(access_token)
+    return generate_pictures(sp)
     
 

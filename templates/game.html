@@ -50,6 +50,50 @@
             justify-content: center;
             min-height: 100vh;
         }
+        form {
+            text-align: center;
+        }
+        input[type="radio"] { /* Afectará a TODOS los radio de la página*/
+            display: none; /* Desaparece los botones pero no los textos. Como he hecho abajo lo del
+            /* label, los textos seguirán valiendo al clickear*/
+        }
+
+        label { /* Los label solo están donde los radio buttons, así que esto los modificará*/
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid white;
+            cursor: pointer; /* Al pasar el ratón por encima, la flecha pasa a manita. Más visual*/
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        input[type="radio"]:checked + label { /* Afecta a los label justo después de radio checked */
+            /* Según la lógica que hemos construído, son los textos que se seleccionen*/
+            background-color: #1DB954;
+            border-color: #1DB954;
+        }
+
+        select { /* Nuestro dropdown*/
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            padding: 8px 20px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 32px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        label:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
 
     </style>
   </head>
@@ -65,12 +109,19 @@
         <h1>Hola, {{username}}</h1>
         <h3>Mode:</h3>
         <form action="/game_start" method="post">
-            <input type="radio" name="game_mode" value="artists" checked> Artists
-            <input type="radio" name="game_mode" value="tracks"> Tracks
+            <input type="radio" name="game_mode" value="artists" id="artists" checked>
+            <label for="artists">Artists</label>
+            <!-- lo del label hace que el texto sea clickeable. Necesita que haya id en el input-->
+             <!-- El texto clickable es lo que hay en Label. Si quiero personalizar, personalizo label-->
+            <input type="radio" name="game_mode" value="tracks" id="tracks">
+            <label for="tracks">Tracks</label>
         <h3>Time range:</h3>
-            <input type="radio" name="time_range" value="short_term" checked> Last Month
-            <input type="radio" name="time_range" value="medium_term"> Last 6 Months
-            <input type="radio" name="time_range" value="long_term"> Last Year
+            <input type="radio" name="time_range" value="short_term" id="short_term" checked>
+            <label for="short_term">Last Month</label>
+            <input type="radio" name="time_range" value="medium_term" id="medium_term">
+            <label for="medium_term">Last 6 months</label>
+            <input type="radio" name="time_range" value="long_term" id="long_term">
+            <label for="long_term">Last year</label>
         <h3>Number of participants:</h3>
             <select name="participants">
                 <option value="2">2</option>

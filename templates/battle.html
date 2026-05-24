@@ -4,12 +4,13 @@
     <title>World Cupify</title>
   </head>
   <body>
-    <button>Click aquí</button>
     <h1>Round {{round}}, battle {{battle}}/{{round_matches}}</h1>
     <form method="post" action="/battle">
         <div style="display: flex;">
-            <button name="winner" style="width: 50%;" value="{{contender_1}}" >{{contender_1}}</button>
-            <button name="winner" style="width: 50%;" value="{{contender_2}}" >{{contender_2}}</button>
+          <img src="{{contender_1.image}}"  />
+          <button name="winner" style="width: 50%;" value="{{contender_1}}" >{{contender_1.name}}</button>
+          <img src="{{contender_2.image}}"  />
+          <button name="winner" style="width: 50%;" value="{{contender_2}}" >{{contender_2.name}}</button>
         </div>
     </form>
   </body>
