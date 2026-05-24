@@ -4,31 +4,85 @@
     <title>World Cupify</title>
     <link href="/static/styles.css" rel="stylesheet"> 
     <!-- Importamos el css styles, que está en static --> 
+    <style>
+        .scroll-track-left img, .scroll-track-right img {
+            width: 33vh; /* Ocupará un tercio de la pantalla */
+            height: 33vh;/* Same thing */
+            object-fit: cover;
+        }
+
+        @keyframes scroll-left { /* Las animaciones que usarán scroll-track-left */
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-3000px); }
+        }
+
+        @keyframes scroll-right {
+            0% { transform: translateX(-3000px); }
+            100% { transform: translateX(0); }
+        }
+
+        .scroll-track-left {
+            display: flex;
+            gap: 10px;
+            animation: scroll-left 75s linear infinite;
+        }
+
+        .scroll-track-right {
+            display: flex;
+            gap: 10px;
+            animation: scroll-right 75s linear infinite;
+        }
+
+        .scroll-row {
+            position: fixed;
+            width: 100%;
+            opacity: 0.3;
+        }
+        .scroll-row:nth-child(1) { top: 0%; }
+        .scroll-row:nth-child(2) { top: 33%; }
+        .scroll-row:nth-child(3) { top: 66%; }
+
+        .content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+    </style>
   </head>
   <body>
-    {% if error %}
-    <p>{{ error }}</p>
-    {% endif %}
-    <h1>Spotify World Cup</h1>
-    <h1>Hola, {{username}}</h1>
-    <h3>Mode:</h3>
-    <form action="/game_start" method="post">
-        <input type="radio" name="game_mode" value="artists" checked> Artists
-        <input type="radio" name="game_mode" value="tracks"> Tracks
-    <h3>Time range:</h3>
-        <input type="radio" name="time_range" value="short_term" checked> Last Month
-        <input type="radio" name="time_range" value="medium_term"> Last 6 Months
-        <input type="radio" name="time_range" value="long_term"> Last Year
-    <h3>Number of participants:</h3>
-        <select name="participants">
-            <option value="2">2</option>
-            <option value="4">4</option>
-            <option value="8">8</option>
-            <option value="16">16</option>
-            <option value="32">32</option>
-        </select>
-    <button type="submit">START</button>
-    </form>
-    <a href="/logout" onclick="var w = window.open('https://accounts.spotify.com/logout', '_blank', 'width=500,height=500'); setTimeout(function(){ w.close(); }, 2000);">Logout</a>
+    <div class="scroll-row"><div class="scroll-track-right"></div></div>
+    <div class="scroll-row"><div class="scroll-track-left"></div></div>
+    <div class="scroll-row"><div class="scroll-track-right"></div></div>
+    <div class="content">
+        {% if error %}
+        <p>{{ error }}</p>
+        {% endif %}
+        <h1>Spotify World Cup</h1>
+        <h1>Hola, {{username}}</h1>
+        <h3>Mode:</h3>
+        <form action="/game_start" method="post">
+            <input type="radio" name="game_mode" value="artists" checked> Artists
+            <input type="radio" name="game_mode" value="tracks"> Tracks
+        <h3>Time range:</h3>
+            <input type="radio" name="time_range" value="short_term" checked> Last Month
+            <input type="radio" name="time_range" value="medium_term"> Last 6 Months
+            <input type="radio" name="time_range" value="long_term"> Last Year
+        <h3>Number of participants:</h3>
+            <select name="participants">
+                <option value="2">2</option>
+                <option value="4">4</option>
+                <option value="8">8</option>
+                <option value="16">16</option>
+                <option value="32">32</option>
+            </select>
+        <button type="submit">START</button>
+        </form>
+        <a href="/logout" onclick="var w = window.open('https://accounts.spotify.com/logout', '_blank', 'width=500,height=500'); setTimeout(function(){ w.close(); }, 2000);">Logout</a>
+    </div>
+    <script src="/static/game.js"></script>
   </body>
 </html>

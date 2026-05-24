@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from src.auth import get_token_code, get_auth_url, get_spotify_client_web
-from src.spotifydata import generate_data_web
+from src.spotifydata import generate_data_web, generate_pictures
 import json
 from fastapi.staticfiles import StaticFiles
 
@@ -110,5 +110,10 @@ async def logout(request: Request):
     for cookie in request.cookies.keys():
         response.delete_cookie(cookie)
     return response
+
+@app.get("/images")
+async def get_images(request: Request):
+    access_token = request.cookies['access_token']
+    return generate_pictures(access_token)
     
 

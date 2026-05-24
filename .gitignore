@@ -5,3 +5,5 @@ __pycache__/
 .env
 .ipynb_checkpoints/
 .cache
+scratch.py
+scratch.js
