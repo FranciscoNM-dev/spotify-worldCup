@@ -8,3 +8,36 @@ body { /* Estos estilos serán para TODOS LOS BODY. Algunos se heredarán a sus 
         background-color: #121212;
         color: white;
     }
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  display: flex;                /* navbar en fila */
+  justify-content: space-between; /* logo a la izquierda, links a la derecha */
+  align-items: center;          /* centra verticalmente */
+  padding: 0 2rem;
+  box-sizing: border-box; /* Impide el padding se salga por fuera*/
+  background-color: rgba(0, 0, 0, 0.6); /* fondo semitransparente */
+  height: 60px;
+}
+
+nav ul {
+  display: flex;        /* los li en fila */
+  list-style: none;     /* quita los puntos de la lista */
+  gap: 2rem;            /* espacio entre links */
+  margin: 0;
+  padding: 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;  /* quita el subrayado */
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+nav a:hover {
+  color: #1DB954;  /* verde Spotify al hacer hover */
+}

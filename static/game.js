@@ -10,10 +10,12 @@ fetch('/images') // hace una petición HTTP a la URL que le paso. Como si la abr
         //console.log(images) //lo imprime en la consola del navegador. Como print de python pero en js
         //const tracks = document.querySelectorAll('.scroll-track') //busca los scroll-track del html
         //Hago 3 query selector porque uno va a la der, otro a la izq, otro a la der
-        const trackRight1 = document.querySelector('.scroll-row:nth-child(1) .scroll-track-right')
-        //busca scroll-track-right DENTRO DE el primer scroll-row. Ojo a ese sistema de jerarquía
-        const trackLeft = document.querySelector('.scroll-row:nth-child(2) .scroll-track-left')
-        const trackRight2 = document.querySelector('.scroll-row:nth-child(3) .scroll-track-right')
+        const trackRight1 = document.querySelectorAll('.scroll-track-right')[0]
+        //Busca en el html entero LA PRIMERA APARICIÓN (0) de ese tag. Sin importar cómo de anidado esté
+        //Podría usar solo querySelector por ser el primero. Pero bueno, legibilidad
+        const trackLeft = document.querySelector('.scroll-track-left')
+        //También busca el primero, pero como aquí solo hay uno no hace falta hacer All y indexear
+        const trackRight2 = document.querySelectorAll('.scroll-track-right')[1]
         const third = Math.floor(images.length / 3)
         const row1 = images.slice(0, third)
         const row2 = images.slice(third, third * 2)

@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from src.auth import get_token_code, get_auth_url, get_spotify_client_web
+from src.auth import get_token_code, get_auth_url, get_spotify_client_web, refresh_access_token
 from src.spotifydata import generate_data_web, generate_pictures
 import json
 from fastapi.staticfiles import StaticFiles
+from spotipy.exceptions import SpotifyException #Para manejar errores de token
 
 
 app = FastAPI()
@@ -24,21 +25,32 @@ async def logging_in():
 
 @app.get("/callback")
 async def callback(code: str):
-    access_token = get_token_code(code)['access_token']
+    token_info = get_token_code(code)
     response = RedirectResponse("/game")
-    response.set_cookie(key="access_token", value=access_token)
+    response.set_cookie(key="access_token", value=token_info['access_token']) #access token
+    response.set_cookie(key="refresh_token", value=token_info['refresh_token']) #refresh token
     return response
 
 @app.get("/game", response_class=HTMLResponse)
 async def game_page(request: Request):
 
     access_token = request.cookies['access_token']
-    spClient = get_spotify_client_web(access_token)
-    username = spClient.current_user()['display_name']
+    refresh_token = request.cookies['refresh_token']
+    try: #Si todo va bien (el token no ha caducado)
+        spClient = get_spotify_client_web(access_token)
+        username = spClient.current_user()['display_name']
+        
+    except SpotifyException as e: #Si hay excepción de Spoti
+        if e.http_status == 401: #Y esa excepción es por token caducado
+            access_token = refresh_access_token(refresh_token)  # pide token nuevo
+            sp = get_spotify_client_web(access_token)           # crea cliente nuevo
+            username = sp.current_user()['display_name']        # reintenta
+
     error = request.cookies.get('error', None)
     response = templates.TemplateResponse(
         request=request, name="game.html", context={"username": username, "error": error}
     )
+    response.set_cookie(key="access_token", value=access_token)  # actualiza token si renové
     if error:
         response.delete_cookie("error")
 
@@ -49,6 +61,7 @@ async def game_page(request: Request):
 async def game_start(request: Request, game_mode: str = Form(...), time_range: str = Form(...), participants: int = Form(...)): 
     #Lo que importa es el nombre del param. Va a Form a buscar ese nombre en particular
     access_token = request.cookies['access_token']
+    refresh_token = request.cookies['refresh_token']
     sp = get_spotify_client_web(access_token)
     try:
         participant_dictionaries = generate_data_web(sp, game_mode, time_range, participants)
@@ -56,12 +69,23 @@ async def game_start(request: Request, game_mode: str = Form(...), time_range: s
         response = RedirectResponse("/game", status_code=303)
         response.set_cookie(key='error', value = str(e))
         return response
+    except SpotifyException as e:
+        if e.http_status == 401:
+            access_token = refresh_access_token(refresh_token)  # pide token nuevo
+            sp = get_spotify_client_web(access_token)
+            try:
+                participant_dictionaries = generate_data_web(sp, game_mode, time_range, participants)
+            except ValueError as e:
+                response = RedirectResponse("/game", status_code=303)
+                response.set_cookie(key='error', value = str(e))
+                return response
     bracket = [[participant_dictionaries[x], participant_dictionaries[x+1]] for x in range(0,len(participant_dictionaries),2)]
     response = RedirectResponse("/battle", status_code=303)
     response.set_cookie(key="bracket", value=json.dumps(bracket))
     response.set_cookie(key='index', value=0)
     response.set_cookie(key='round', value=1)
     response.set_cookie(key='round_winners', value = json.dumps([]))
+    response.set_cookie(key='access_token', value = access_token)
     return response
 
 @app.get("/battle", response_class=HTMLResponse)
@@ -79,9 +103,11 @@ async def game_round(request: Request):
 
 @app.post("/battle", response_class=RedirectResponse)
 async def proccess_choice(request: Request, winner = Form(...)):
+    print(winner)
     response = RedirectResponse("/battle", status_code=303)
     index = int(request.cookies['index'])
     round_winners = json.loads(request.cookies['round_winners'])
+    print(round_winners)
     bracket = json.loads(request.cookies['bracket'])
     round = int(request.cookies['round'])
     round_winners.append(winner)
@@ -100,10 +126,12 @@ async def proccess_choice(request: Request, winner = Form(...)):
     response.set_cookie(key='round_winners', value = json.dumps(round_winners))
     return response
 
-@app.get("/winner")
+@app.get("/winner", response_class=HTMLResponse)
 async def winner(request: Request):
     winner = json.loads(request.cookies['winner'])
-    return f'{winner['name']} wins!!'
+    return templates.TemplateResponse(
+        request=request, name="winner.html", context={"winner": winner}
+    )
 
 @app.get("/logout", response_class=RedirectResponse)
 async def logout(request: Request):
@@ -112,7 +140,7 @@ async def logout(request: Request):
         response.delete_cookie(cookie)
     return response
 
-@app.get("/images")
+@app.get("/images") #Este "endpoint" es bastante importante para el script de /game
 async def get_images(request: Request):
     access_token = request.cookies['access_token']
     sp = get_spotify_client_web(access_token)

@@ -18,3 +18,7 @@ def get_token_code(code):
 
 def get_spotify_client_web(access_token): #scope "ya va en el token"
     return spotipy.Spotify(auth=access_token)
+
+def refresh_access_token(refresh_token): #Para renovar access_token, que caduca en una hora
+    token_info = oauth.refresh_access_token(refresh_token)
+    return token_info['access_token']

@@ -38,6 +38,7 @@ def generate_pictures(sp):
             if link not in picture_links:
                 picture_links.append(link)
                 """
+                QUITADO POR DEMASIADAS CALLS A LA API
             song_artists = [artist for artist in track['artists']]
             for x in song_artists:
                 artist_name = x['name']

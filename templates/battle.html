@@ -2,16 +2,107 @@
 <html>
   <head>
     <title>World Cupify</title>
+    <link href="/static/styles.css" rel="stylesheet"> 
+    <style>
+      .content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-family: 'Montserrat', sans-serif;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .battle-container {
+        display: flex;
+        width: 100%;
+        min-height: 80vh;
+        align-items: center;
+      }
+
+      .contender-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem; /* Espacio entre la imagen y el span */
+        background: none; /* Quita el fondo gris que tienen los botones por defecto */
+        border: none;  /* Quita el borde que tienen los botones por defecto */
+        cursor: pointer; /* El cursor cambia a manita al pasar por encima */
+        padding: 2rem; /* Espacio interior, para que el hover no quede pegado al borde */
+        border-radius: 20px; /* Esquinas redondeadas*/
+        transition: background 0.2s;
+      }
+
+      .contender-btn:hover {
+        background-color: rgba(255, 255, 255, 0.08); /* Fondo blanco transparente al hovear */
+      }
+
+      .contender-btn img {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;  /* Si la foto no es cuadrada, hace crop en vez de estirarla */
+        border-radius: 12px;
+        border: 3px solid transparent;
+        transition: border 0.2s, transform 0.2s;
+      }
+
+      .contender-btn:hover img {
+        border: 3px solid #1DB954;
+        transform: scale(1.03); /* La imagen crece un 3% al pasar el ratón por encima */
+      }
+
+      .contender-btn span {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        background-color: #1DB954;
+        border-radius: 24px;
+        padding: 10px 28px;
+      }
+
+      .vs-divider {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 900;
+        font-size: 2.5rem;
+        color: rgba(255,255,255,0.3);
+        padding: 0 1rem;
+      }
+    </style>
   </head>
   <body>
-    <h1>Round {{round}}, battle {{battle}}/{{round_matches}}</h1>
-    <form method="post" action="/battle">
-        <div style="display: flex;">
-          <img src="{{contender_1.image}}"  />
-          <button name="winner" style="width: 50%;" value="{{contender_1}}" >{{contender_1.name}}</button>
-          <img src="{{contender_2.image}}"  />
-          <button name="winner" style="width: 50%;" value="{{contender_2}}" >{{contender_2.name}}</button>
+    <nav>
+      <a href="/">World Cupify</a>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/privacy">Privacy Policy</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <h1>Round {{round}} — Battle {{battle}}/{{round_matches}}</h1>
+      <form method="post" action="/battle">
+        <div class="battle-container">
+          <button class="contender-btn" name="winner" value='{{contender_1 | tojson}}'>
+            <img src='{{contender_1.image}}' />
+            <span>{{contender_1.name}}</span>
+          </button>
+
+          <div class="vs-divider">VS</div>
+
+          <button class="contender-btn" name="winner" value='{{contender_2 | tojson}}'>
+            <img src='{{contender_2.image}}' />
+            <span>{{contender_2.name}}</span>
+          </button>
         </div>
-    </form>
+      </form>
+    </div>
   </body>
 </html>
