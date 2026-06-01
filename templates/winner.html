@@ -29,11 +29,7 @@
         color: white;
       }
 
-      .trophy {
-        font-size: 4rem;
-      }
-
-      a {
+      .play-again {
         font-family: 'Montserrat', sans-serif;
         font-weight: 700;
         background-color: #1DB954;
@@ -44,7 +40,7 @@
         transition: opacity 0.2s;
       }
 
-      a:hover {
+      .play-again:hover {
         opacity: 0.8;
       }
     </style>
@@ -63,7 +59,7 @@
       <h1>And the winner is...</h1>
       <img class="winner-img" src="{{ winner.image }}" />
       <span class="winner-name">{{ winner.name }}</span>
-      <a href="/game">Play again</a>
+      <a href="/game" class="play-again">Play again</a>
     </div>
     <script src="/static/confetti.js"></script>
   </body>
