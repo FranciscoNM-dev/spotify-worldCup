@@ -11,7 +11,7 @@ def get_spotify_client(scope = 'user-top-read'):
 #print(sp.current_user()) #2
 
 def get_auth_url():
-    return oauth.get_authorize_url()
+    return oauth.get_authorize_url(show_dialog=True)
 
 def get_token_code(code):
     return oauth.get_access_token(code)
