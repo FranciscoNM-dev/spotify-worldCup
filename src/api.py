@@ -48,7 +48,8 @@ async def game_page(request: Request):
             access_token = refresh_access_token(refresh_token)  # pide token nuevo
             sp = get_spotify_client_web(access_token)           # crea cliente nuevo
             username = sp.current_user()['display_name']        # reintenta
-
+        else:
+            raise e
     error = request.cookies.get('error', None)
     response = templates.TemplateResponse(
         request=request, name="game.html", context={"username": username, "error": error}
