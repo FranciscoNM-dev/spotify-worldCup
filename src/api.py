@@ -161,5 +161,12 @@ async def get_images(request: Request):
     access_token = request.cookies['access_token']
     sp = get_spotify_client_web(access_token)
     return generate_pictures(sp)
-    
 
+#Clean cookies when new game begins
+@app.get("/new_game", response_class=RedirectResponse)
+async def new_game(request: Request):
+    response = RedirectResponse("/game")
+    for cookie in request.cookies.keys():
+        if cookie not in ['access_token', 'refresh_token']:
+            response.delete_cookie(cookie)
+    return response
