@@ -6,6 +6,9 @@ from src.spotifydata import generate_data_web, generate_pictures
 import json
 from fastapi.staticfiles import StaticFiles
 from spotipy.exceptions import SpotifyException #Para manejar errores de token
+#Needed for postgresql
+from src.database import SessionLocal, Result, DateTime
+from datetime import datetime
 
 
 app = FastAPI()
@@ -86,6 +89,9 @@ async def game_start(request: Request, game_mode: str = Form(...), time_range: s
     response.set_cookie(key='round', value=1)
     response.set_cookie(key='round_winners', value = json.dumps([]))
     response.set_cookie(key='access_token', value = access_token)
+    #Needed for postgresql
+    response.set_cookie(key='game_mode', value = game_mode)
+    response.set_cookie(key='participants', value = participants)
     return response
 
 @app.get("/battle", response_class=HTMLResponse)
@@ -129,6 +135,16 @@ async def proccess_choice(request: Request, winner = Form(...)):
 @app.get("/winner", response_class=HTMLResponse)
 async def winner(request: Request):
     winner = json.loads(request.cookies['winner'])
+    game_mode = request.cookies['game_mode']
+    participants = request.cookies['participants']
+    #We open the session here
+    db = SessionLocal()
+    result = Result(winner_name = winner['name'], winner_image = winner['image'],
+                    game_mode = game_mode, participants = participants, timestamp = datetime.now())
+    #Add, commit, close session
+    db.add(result)
+    db.commit()
+    db.close()
     return templates.TemplateResponse(
         request=request, name="winner.html", context={"winner": winner}
     )

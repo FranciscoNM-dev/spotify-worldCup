@@ -5,3 +5,5 @@ python-dotenv==1.2.2
 python-multipart==0.0.29
 spotipy==2.26.0
 requests==2.33.1
+psycopg2-binary==2.9.12
+SQLAlchemy==2.0.50
