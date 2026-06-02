@@ -3,7 +3,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 load_dotenv() #1
 
-oauth = SpotifyOAuth(scope='user-top-read')
+oauth = SpotifyOAuth(scope='user-top-read', show_dialog=True)
 
 def get_spotify_client(scope = 'user-top-read'):
     return spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
@@ -11,7 +11,7 @@ def get_spotify_client(scope = 'user-top-read'):
 #print(sp.current_user()) #2
 
 def get_auth_url():
-    return oauth.get_authorize_url(show_dialog=True)
+    return oauth.get_authorize_url()
 
 def get_token_code(code):
     return oauth.get_access_token(code)
